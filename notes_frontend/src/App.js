@@ -53,7 +53,8 @@ function App() {
     setListError("");
     try {
       const data = await listNotes();
-      const normalized = Array.isArray(data) ? data.map(normalizeNoteFromApi) : [];
+      const items = Array.isArray(data) ? data : data?.items;
+      const normalized = Array.isArray(items) ? items.map(normalizeNoteFromApi) : [];
       setNotes(normalized);
 
       if (!keepSelection) {

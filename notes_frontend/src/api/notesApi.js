@@ -55,11 +55,21 @@ function safeJsonParse(text) {
 
 /**
  * PUBLIC_INTERFACE
- * Fetch all notes.
- * Expected backend: GET /notes -> Note[]
+ * Fetch notes (paginated).
+ *
+ * Backend contract (current): GET /notes -> { total, items, limit, offset }
+ * We also support an array response for backward compatibility.
  */
-export async function listNotes() {
-  return request("/notes", { method: "GET" });
+export async function listNotes(options = {}) {
+  const params = new URLSearchParams();
+
+  if (options.limit != null) params.set("limit", String(options.limit));
+  if (options.offset != null) params.set("offset", String(options.offset));
+  if (options.sort_by) params.set("sort_by", String(options.sort_by));
+  if (options.sort_order) params.set("sort_order", String(options.sort_order));
+
+  const qs = params.toString();
+  return request(`/notes${qs ? `?${qs}` : ""}`, { method: "GET" });
 }
 
 /**
